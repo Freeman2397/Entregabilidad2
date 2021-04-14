@@ -1,0 +1,9 @@
+Se ha encontrado una etiqueta <tbody>, no deberia estar, ya que hace referencia a tablas que pueden disminuir la calidad de la entrega.
+Hemos encontrado la fuente Arial, es una fuente segura
+Hemos encontrado la fuente Trebuchet MS, es una fuente segura
+Hemos encontrado la fuente Verdana, es una fuente segura
+Aparecen 2 imagenes
+El texto tiene más de un cuarto de letras en mayusculas, es una cantidad un poco alta.
+Necesita añadir una forma de desuscribirse.
+Se ha encontrado una palabra indebida: Asombroso
+Ratio de apertura por tamaño de cabecera de 10.4%, ratio de click de 1.8%. PEOR CASO.
