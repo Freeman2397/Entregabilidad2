@@ -1,3 +1,6 @@
+
+numeroInforme = 1
+
 dic_palabras = ["¡Hágalo ahora!",
 "¡Llame gratis!",
 "Ahorre",
@@ -37,13 +40,15 @@ dic_palabras = ["¡Hágalo ahora!",
 "préstamos"
 ]
 
-dic_fuentes = ["Arial",
-"Tahoma",
-"Trebuchet MS",
-"Verdana",
-"Georgia",
-"Times New Roman",
-"Times",
-"Courier",
-"Andale mono",
-"Comic Sans MS" ]
+dic_fuentes = ["arial",
+"tahoma",
+"trebuchet ms",
+"verdana",
+"georgia",
+"times new roman",
+"times",
+"courier",
+"andale mono",
+"comic sans ms" ]
+
+dic_explicaciones = []

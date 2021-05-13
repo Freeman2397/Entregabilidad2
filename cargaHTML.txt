@@ -26,12 +26,12 @@ Si tiene cualquier duda o problema técnico no dude en contactar con nosotros.
 <td style="width:150px">
 <div id="m_7718233212555020789m_4839403039122940786logo-brekiadata" style="color:#666;font:14px/1em &#39;Trebuchet MS&#39;,&#39;Lucida Grande&#39;,Arial,Verdana,sans-serif;width:99%">
 <p style="margin:0 10px 0 0">
-<a title="https://brekiadata.com/" href="https://brekiadata.com/" rel="noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?hl=es&amp;q=https://brekiadata.com/&amp;source=gmail&amp;ust=1618310607412000&amp;usg=AFQjCNFLFPudosfpjCR2EOncgNn70z4ozA"><img src="https://ci3.googleusercontent.com/proxy/6n1oZ3RD5HU3vkVQKlhKNF06sIV-4N1oO0sNg_hGWxkeCMuINIVHM2GLSsfYz8DORg2pSZQNAnADAtay95YRJs6jsdQOwriYofN6SR_TBRPdo1VMOQ=s0-d-e1-ft#https://brekiadata.com//includes/skins/default/img/layout/logo.png" alt="Brekiadata" border="0" title="Enlace con el sitio web de Brekiadata" style="border:0;margin:1em 0"></a>
+<a title="https://brekiadata.com/" href="https://brekiadata.com/" rel="noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?hl=es&amp;q=https://brekiadata.com/&amp;source=gmail&amp;ust=1618310607412000&amp;usg=AFQjCNFLFPudosfpjCR2EOncgNn70z4ozA"><img src='https://ci3.googleusercontent.com/proxy/6n1oZ3RD5HU3vkVQKlhKNF06sIV-4N1oO0sNg_hGWxkeCMuINIVHM2GLSsfYz8DORg2pSZQNAnADAtay95YRJs6jsdQOwriYofN6SR_TBRPdo1VMOQ=s0-d-e1-ft#https://brekiadata.com//includes/skins/default/img/layout/logo.png' alt="Brekiadata" border="0" title="Enlace con el sitio web de Brekiadata" style="border:0;margin:1em 0"></a>
 </p>
 </div>
 </td>
 <td style="vertical-align:top;text-align:left">
-<div id="m_7718233212555020789m_4839403039122940786firma" style="color:#666;font:15px/1.2em &#39;Trebuchet MS&#39;,&#39;Lucida Grande&#39;,Arial,Verdana,sans-serif;padding-top:0.8em;width:99%">
+<div id="m_7718233212555020789m_4839403039122940786firma" style="color:#666;font:15px/1.2em &#39;Trebuchet STXinwei MS&#39;,&#39;Lucida Grande&#39;,Arial,Verdana,sans-serif;padding-top:0.8em;width:99%">
 <p style="font-family:&#39;Trebuchet MS&#39;,&#39;Lucida Grande&#39;,Arial,Verdana,sans-serif;margin:10px 0 0 0">
 <strong style="color:#008def">BrekiaData</strong><br>
 </p>
@@ -39,9 +39,9 @@ Si tiene cualquier duda o problema técnico no dude en contactar con nosotros.
 <a style="color:#444;font-size:12px" title="e-Mail a: info@brekiadata.com" href="mailto:info@brekiadata.com" rel="noreferrer" target="_blank">info@brekiadata.com</a><br>
 </p>
 <p style="font-family:&#39;Trebuchet MS&#39;,&#39;Lucida Grande&#39;,Arial,Verdana,sans-serif;margin:0;padding-bottom:0.1em">
-<span style="color:#444;font-size:12px">954-06-29-15 / 647-76-53-84</span><br>
+<span style="color:#444;font-size:12px" STXinwei >954-06-29-15 / 647-76-53-84</span><br>
 </p>
-<p style="font-weight:bold;line-height:1.1em;color:#444;font-size:12px;font-family:&#39;Trebuchet MS&#39;,&#39;Lucida Grande&#39;,Arial,Verdana,sans-serif;margin:5px 0 0 0">
+<p style="font-weight:bold;line-height:1.1em;color:#444;font-size:12px STXinwei;font-family:&#39;Trebuchet STXinwei MS&#39;,&#39;Lucida Grande&#39;,Arial,Verdana,sans-serif;margin:5px 0 0 0">
 <a style="color:#444" title="P�gina principal de Brekiadata" href="http://www.brekiadata.com" rel="noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?hl=es&amp;q=http://www.brekiadata.com&amp;source=gmail&amp;ust=1618310607413000&amp;usg=AFQjCNFetxR4BTgX6dVX1e1KMnORu3XTxw">www.brekiadata.com</a>
 </p>
 </div>
