@@ -1,5 +1,5 @@
 
-numeroInforme = 1
+numero_informe = 1
 
 dic_palabras = ["¡Hágalo ahora!",
 "¡Llame gratis!",
