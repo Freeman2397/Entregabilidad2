@@ -1,34 +1,35 @@
 from datetime import date
 import os
 import re
-from reportlab.lib.pagesizes import A4
+
 import DiccionarioPalabras
-from reportlab.pdfgen import canvas
 import editpyxl
 
-informeRevision = True
-numeroReporte = DiccionarioPalabras.numeroInforme
-DiccionarioPalabras.numeroInforme +=1
-ListaParseoGlobal = []
-ListaDeReportes = []
-ListaPuntuaciones = []
-ListaInformacion = []
-nombreCliente = "Pablo Romero "
-emailCLiente = "pabloromero@brekiadata.com"
-nombreInforme = "Informe "+ nombreCliente+ str(date.today())+ ".xlsx"
+informe_revision = True
+numero_reporte = DiccionarioPalabras.numero_informe
+DiccionarioPalabras.numero_informe += 1
+lista_parseo_global = []
+lista_reportes = []
+lista_puntuaciones = []
+lista_informacion = []
+nombre_cliente = "Pablo Romero "
+email_cliente = "pabloromero@brekiadata.com"
+nombre_informe = "Informe " + nombre_cliente + str(date.today()) + ".xlsx"
 
 # Estos tres primeros parámetros rigen la puntuación del analisis.
 # Se dibidite el total de puntuació, por defecto 100, entre el total de funciones que se ejecutan.
 # Cada funcioón que de un error se resta su parte a la nota final.
-NumeroDeFunciones = 14 #Este parámetro hay que ajustarlo en función de las funciones que se ejecuten. Es sencillo contarlas en el método main.
+NumeroDeFunciones = 14  # Este parámetro hay que ajustarlo en función de las funciones que se ejecuten. Es sencillo contarlas en el método main.
 Puntuacion = 100
-NotaParaRestar = Puntuacion/NumeroDeFunciones
-listaPosiciones = []
-listaRanking = []
-listaFuentes = []
-listaTitulos = []
-listaErrores = []
-#INSTRUCCIONES
+NotaParaRestar = Puntuacion / NumeroDeFunciones
+lista_posiciones = []
+lista_ranking = []
+lista_fuentes = []
+lista_titulos = []
+lista_errores = []
+
+
+# INSTRUCCIONES
 # Para usar el código hay que modificar tres ficheros .txt que se encuentran en la misma carpeta que este
 # script. Cada fichero tiene un nombre indicativo y hay que poner lo que se debe en cada cual. Así mismo, en el fichero
 # cargaAsunto.txt se coloca el asunto del email. En el fichero cargaCuerpo.txt se coloca el cuerpo de email. Por último
@@ -48,211 +49,223 @@ listaErrores = []
 # Crear una hoja secundaria con datos para revisar. empezado
 
 def leeTXT(fichero):
-    
     archivo = open(fichero, "r")
     datos = archivo.read()
     archivo.close()
     return datos
 
+
 def puntua(puntos):
     if puntos == 0:
-        ListaPuntuaciones.append("RatingIndA")
+        lista_puntuaciones.append("RatingIndA")
     elif puntos == 1:
-        ListaPuntuaciones.append("RatingIndB")
+        lista_puntuaciones.append("RatingIndB")
     elif puntos == 2:
-        ListaPuntuaciones.append("RatingIndC")
+        lista_puntuaciones.append("RatingIndC")
     elif puntos == 3:
-        ListaPuntuaciones.append("RatingIndD")
+        lista_puntuaciones.append("RatingIndD")
     elif puntos == 4:
-        ListaPuntuaciones.append("RatingIndE")
+        lista_puntuaciones.append("RatingIndE")
     elif puntos == 5:
-        ListaPuntuaciones.append("RatingIndF")
+        lista_puntuaciones.append("RatingIndF")
     elif puntos == 6:
-        ListaPuntuaciones.append("RatingIndG")
+        lista_puntuaciones.append("RatingIndG")
     else:
-        ListaPuntuaciones.append("RatingIndH")
+        lista_puntuaciones.append("RatingIndH")
 
-def buscaExclamacionesIncorrectas(texto,lugar,filaRating,filaDato,titulo):
+
+def buscaExclamacionesIncorrectas(texto, lugar, filaRating, filaDato, titulo):
     totalIncorectas = 0
     global Puntuacion
-    global ListaInformacion
+    global lista_informacion
 
-    for s in ("!!","!!!","!!!!","!!!!!","¡¡","¡¡¡","¡¡¡¡","¡¡¡¡¡"):
+    for s in ("!!", "!!!", "!!!!", "!!!!!", "¡¡", "¡¡¡", "¡¡¡¡", "¡¡¡¡¡"):
         if s in texto:
             texto1 = "Se han encontrado señales de exclamación indebidas en el " + lugar
-            ListaDeReportes.append(texto1)
-            totalIncorectas+=1
+            lista_reportes.append(texto1)
+            totalIncorectas += 1
 
-    if totalIncorectas>2:
-        Puntuacion= Puntuacion - NotaParaRestar
+    if totalIncorectas > 2:
+        Puntuacion = Puntuacion - NotaParaRestar
         puntua(3)
     else:
         puntua(totalIncorectas)
 
-    ListaInformacion.append(totalIncorectas)
+    lista_informacion.append(totalIncorectas)
 
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(totalIncorectas)
 
-def chequeaPalabrasGancho(cuerpo,filaRating,filaDato,titulo):
-    global ListaInformacion
+
+def chequeaPalabrasGancho(cuerpo, filaRating, filaDato, titulo):
+    global lista_informacion
     cuentaGancho = 0
 
     for i in DiccionarioPalabras.dic_palabras:
         if i.lower() in cuerpo.lower():
             cuentaGancho += 1
             texto = "Se ha encontrado una palabra indebida: " + i
-            ListaDeReportes.append(texto)
+            lista_reportes.append(texto)
 
     global Puntuacion
 
-    if 3>cuentaGancho<6 :
+    if 3 > cuentaGancho < 6:
         puntua(4)
-        Puntuacion= Puntuacion - NotaParaRestar/2
+        Puntuacion = Puntuacion - NotaParaRestar / 2
 
-    elif cuentaGancho>6:
+    elif cuentaGancho > 6:
 
-        Puntuacion= Puntuacion - NotaParaRestar
+        Puntuacion = Puntuacion - NotaParaRestar
         puntua(6)
     else:
         puntua(cuentaGancho)
 
-    ListaInformacion.append(cuentaGancho)
+    lista_informacion.append(cuentaGancho)
 
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(cuentaGancho)
 
-def chequeaTamañoCuerpo(cuerpo,filaRating,filaDato,titulo):
 
+def chequeaTamañoCuerpo(cuerpo, filaRating, filaDato, titulo):
     global Puntuacion
-    global ListaInformacion
-    if len(cuerpo) <500:
+    global lista_informacion
+    if len(cuerpo) < 500:
         texto = "El tamaño del cuerpo es de " + str(len(cuerpo)) + " caracteres. Es un tamaño comedido y correcto."
-        ListaDeReportes.append(texto)
+        lista_reportes.append(texto)
         puntua(0)
-    elif 500 < len(cuerpo) <1500:
-        texto = "El tamaño del cuerpo es de " + str(len(cuerpo)) + " caracteres. Es un tamaño medio pero no tiene porqué empeorar la entrega."
-        ListaDeReportes.append(texto)
+    elif 500 < len(cuerpo) < 1500:
+        texto = "El tamaño del cuerpo es de " + str(
+            len(cuerpo)) + " caracteres. Es un tamaño medio pero no tiene porqué empeorar la entrega."
+        lista_reportes.append(texto)
         puntua(1)
         Puntuacion = Puntuacion - NotaParaRestar / 3
-    elif len(cuerpo) >1500:
-        texto = "El tamaño del cuerpo es de " + str(len(cuerpo)) + " caracteres. Es un tamaño muy grande y puede empeorar la entrega."
-        ListaDeReportes.append(texto)
+    elif len(cuerpo) > 1500:
+        texto = "El tamaño del cuerpo es de " + str(
+            len(cuerpo)) + " caracteres. Es un tamaño muy grande y puede empeorar la entrega."
+        lista_reportes.append(texto)
         puntua(3)
         Puntuacion = Puntuacion - NotaParaRestar
 
-        ListaInformacion.append(len(cuerpo))
+        lista_informacion.append(len(cuerpo))
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(len(cuerpo))
 
-def cuentaMayusculasYMinusculas(texto,parte,filaRating,filaDato,titulo):
-    
+
+def cuentaMayusculasYMinusculas(texto, parte, filaRating, filaDato, titulo):
     indice = 0
     mayusculas = 0
     minusculas = 0
     global Puntuacion
-    global ListaInformacion
+    global lista_informacion
     while indice < len(texto):
         letra = texto[indice]
-        if letra.isupper() == True:
+        if letra.isupper():
             mayusculas += 1
         else:
             minusculas += 1
         indice += 1
 
-    if mayusculas>(minusculas/2):
+    if mayusculas > (minusculas / 2):
         text1 = "El " + parte + " tiene más de la mitad de letras en mayusculas, se debe corregir."
-        ListaDeReportes.append(text1)
+        lista_reportes.append(text1)
         Puntuacion = Puntuacion - NotaParaRestar / 4
         puntua(2)
 
-    elif mayusculas>(minusculas/4):
+    elif mayusculas > (minusculas / 4):
         text1 = "El " + parte + " tiene más de un cuarto de letras en mayusculas, es una cantidad un poco alta."
-        ListaDeReportes.append(text1)
+        lista_reportes.append(text1)
         Puntuacion = Puntuacion - NotaParaRestar / 2
         puntua(4)
     else:
         puntua(0)
 
-    ListaInformacion.append(minusculas/mayusculas)
+    lista_informacion.append(minusculas / mayusculas)
     cargaListas(filaRating, filaDato, titulo)
-    dato = str((mayusculas/minusculas)*100)+"%"
+    dato = str((mayusculas / minusculas) * 100) + "%"
     cargaDatos(dato)
 
-def chequeaTamanoAsunto(asunto,filaRating,filaDato,titulo):
+
+def chequeaTamanoAsunto(asunto, filaRating, filaDato, titulo):
     global Puntuacion
-    global ListaInformacion
-    if 4< len(asunto)<=15:
-        ListaDeReportes.append("Ratio de apertura por tamaño de cabecera de 15.2%, ratio de click de 3.1%. MEJOR APERTURA.")
+    global lista_informacion
+    if 4 < len(asunto) <= 15:
+        lista_reportes.append(
+            "Ratio de apertura por tamaño de cabecera de 15.2%, ratio de click de 3.1%. MEJOR APERTURA.")
         puntua(0)
-    elif 16< len(asunto)<=27:
-        ListaDeReportes.append("Ratio de apertura por tamaño de cabecera de 11.6%, ratio de click de 3.8%. CASO MEDIO.")
+    elif 16 < len(asunto) <= 27:
+        lista_reportes.append("Ratio de apertura por tamaño de cabecera de 11.6%, ratio de click de 3.8%. CASO MEDIO.")
         puntua(2)
-    elif 28< len(asunto)<=39:
-        ListaDeReportes.append("Ratio de apertura por tamaño de cabecera de 12.2%, ratio de click de 4.0%. MEJOR RATIO DE CLICKS.")
+    elif 28 < len(asunto) <= 39:
+        lista_reportes.append(
+            "Ratio de apertura por tamaño de cabecera de 12.2%, ratio de click de 4.0%. MEJOR RATIO DE CLICKS.")
         puntua(0)
-    elif 40< len(asunto)<=50:
-        ListaDeReportes.append("Ratio de apertura por tamaño de cabecera de 11.9%, ratio de click de 2.8%. CASO MEDIO.")
+    elif 40 < len(asunto) <= 50:
+        lista_reportes.append("Ratio de apertura por tamaño de cabecera de 11.9%, ratio de click de 2.8%. CASO MEDIO.")
         puntua(2)
-    elif len(asunto)>51:
-        ListaDeReportes.append("Ratio de apertura por tamaño de cabecera de 10.4%, ratio de click de 1.8%. PEOR CASO.")
+    elif len(asunto) > 51:
+        lista_reportes.append("Ratio de apertura por tamaño de cabecera de 10.4%, ratio de click de 1.8%. PEOR CASO.")
         puntua(4)
         Puntuacion = Puntuacion - NotaParaRestar / 2
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(len(asunto))
 
-def chequeaTbody(html,filaRating,filaDato,titulo):
-    global ListaInformacion
+
+def chequeaTbody(html, filaRating, filaDato, titulo):
+    global lista_informacion
     etiquetas = re.findall('tbody', html)
-    print("Tbody: ",len(etiquetas))
+    print("Tbody: ", len(etiquetas))
 
-    if len(etiquetas)>0:
+    if len(etiquetas) > 0:
         global Puntuacion
-        Puntuacion = Puntuacion - NotaParaRestar/2
+        Puntuacion = Puntuacion - NotaParaRestar / 2
         puntua(2)
 
-        ListaDeReportes.append("Se ha encontrado una etiqueta <tbody>, no deberia estar, ya que hace referencia a tablas que pueden disminuir la calidad de la entrega.")
+        lista_reportes.append("Se ha encontrado una etiqueta <tbody>, no deberia estar, "
+                              "ya que hace referencia a tablas que pueden disminuir la calidad de la entrega.")
     else:
         puntua(0)
 
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(len(etiquetas))
 
-def chequeaForm(html,filaRating,filaDato,titulo):
-    global ListaInformacion
+
+def chequeaForm(html, filaRating, filaDato, titulo):
+    global lista_informacion
     etiquetas = re.findall('<form', html)
-    print("Form: ",len(etiquetas))
+    print("Form: ", len(etiquetas))
 
-    if len(etiquetas)>0:
+    if len(etiquetas) > 0:
         global Puntuacion
-        Puntuacion = Puntuacion - NotaParaRestar/2
+        Puntuacion = Puntuacion - NotaParaRestar / 2
         puntua(2)
-        ListaDeReportes.append("Se ha encontrado un formulario, no deberia estar.")
+        lista_reportes.append("Se ha encontrado un formulario, no deberia estar.")
     else:
         puntua(0)
 
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(len(etiquetas))
 
-def chequeaMargenImagen(html,filaRating,filaDato,titulo):
-    global ListaInformacion
+
+def chequeaMargenImagen(html, filaRating, filaDato, titulo):
+    global lista_informacion
     if "img border" in html:
         if "img border=0" not in html:
             global Puntuacion
             Puntuacion = Puntuacion - NotaParaRestar
             puntua(4)
-            ListaDeReportes.append("Se ha encontrado un borde de imagen incorrecto.")
+            lista_reportes.append("Se ha encontrado un borde de imagen incorrecto.")
     else:
         puntua(0)
 
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(" ")
 
-def chequeaUNSUBSCRIBE(html,filaRating,filaDato,titulo):
-    global ListaInformacion
+
+def chequeaUNSUBSCRIBE(html, filaRating, filaDato, titulo):
+    global lista_informacion
     html.lower()
 
-    if any(s in html for s in ("desuscribir","desuscribirse","darse de baja","unsubscribe")):
+    if any(s in html for s in ("desuscribir", "desuscribirse", "darse de baja", "unsubscribe")):
 
         puntua(0)
         cargaDatos(1)
@@ -261,29 +274,32 @@ def chequeaUNSUBSCRIBE(html,filaRating,filaDato,titulo):
         Puntuacion = Puntuacion - NotaParaRestar
         puntua(4)
         cargaDatos(0)
-        ListaDeReportes.append("Necesita añadir una forma de desuscribirse.")
+        lista_reportes.append("Necesita añadir una forma de desuscribirse.")
 
     cargaListas(filaRating, filaDato, titulo)
 
-def chequeaColores(html,filaRating,filaDato,titulo):
-    global ListaInformacion
+
+def chequeaColores(html, filaRating, filaDato, titulo):
+    global lista_informacion
     if "#FF0000" in html:
         global Puntuacion
         Puntuacion = Puntuacion - NotaParaRestar
         puntua(4)
         cargaDatos("1")
-        ListaDeReportes.append("Se está haciendo uso de un color rojo en alguna parte del email. Esto empeora la entrega.")
+        lista_reportes.append(
+            "Se está haciendo uso de un color rojo en alguna parte del email. Esto empeora la entrega.")
     else:
         puntua(0)
 
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(" ")
 
-def cuentaImagenes(html,filaRating,filaDato,titulo):
-    global ListaInformacion
+
+def cuentaImagenes(html, filaRating, filaDato, titulo):
+    global lista_informacion
     cantidadImages = str(html.count("<img"))
     texto = "Aparecen " + cantidadImages + " imagenes"
-    ListaDeReportes.append(texto)
+    lista_reportes.append(texto)
     if int(cantidadImages) > 4:
         puntua(2)
     else:
@@ -292,123 +308,121 @@ def cuentaImagenes(html,filaRating,filaDato,titulo):
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(cantidadImages)
 
+
 def parseaStringNoOptimo(cadena):
     ListaParsea = []
-    global ListaInformacion
-    while cadena.find("font") >0:
+    global lista_informacion
+    while cadena.find("font") > 0:
 
         cadena = cadena.partition("font")[2]
         indice2 = cadena.partition(">")[0]
         indice3 = cadena.partition("}")[0]
 
-        if len(indice2)<len(indice3):
+        if len(indice2) < len(indice3):
             ListaParsea.append(indice2)
         else:
             ListaParsea.append(indice3)
 
     return ListaParsea
 
-def parseaStringPorInicioYFinal(cadena,inicio,final):
+
+def parseaStringPorInicioYFinal(cadena, inicio, final):
     ListaParsea = []
-    global ListaInformacion
+    global lista_informacion
 
-    while cadena.find(inicio) >0:
-
+    while cadena.find(inicio) > 0:
         cadena = cadena.partition(inicio)[2]
         cadenaFinal = cadena.partition(final)[0]
         ListaParsea.append(cadenaFinal)
 
-
-
     return ListaParsea
 
-def chequeaFuente(html,filaRating,filaDato,titulo):
+
+def chequeaFuente(html, filaRating, filaDato, titulo):
     TotalFuentes = 0
     TotalFuentesIncorrectas = 0
-    global ListaInformacion
+    global lista_informacion
 
-    html= html.lower()
-
-    htmlparseado = parseaStringNoOptimo(html)
+    html = html.lower()
 
     divisor = 0
-    for cadena in ListaParseoGlobal:
+    for cadena in lista_parseo_global:
 
         if divisor == 0:
-            for fuenteCorrecta in  DiccionarioPalabras.dic_fuentes:
+            for fuenteCorrecta in DiccionarioPalabras.dic_fuentes:
                 if fuenteCorrecta in cadena:
                     TotalFuentes += 1
-                    divisor=1
-
+                    divisor = 1
 
         if divisor == 0:
-            for fuenteIncorrecta in listaFuentes:
+            for fuenteIncorrecta in lista_fuentes:
 
                 if fuenteIncorrecta in cadena:
                     TotalFuentesIncorrectas += 1
 
         divisor = 0
 
-    ListaInformacion.append(TotalFuentesIncorrectas)
-    print("Incorrectas",TotalFuentesIncorrectas)
-    print("Correctas",TotalFuentes)
+    lista_informacion.append(TotalFuentesIncorrectas)
+    print("Incorrectas", TotalFuentesIncorrectas)
+    print("Correctas", TotalFuentes)
 
     if TotalFuentes == 0:
         global Puntuacion
         Puntuacion = Puntuacion - NotaParaRestar
         puntua(4)
-        ListaDeReportes.append("No hemos encontrado ninguna fuente segura, por favor cambie la fuente.")
+        lista_reportes.append("No hemos encontrado ninguna fuente segura, por favor cambie la fuente.")
     else:
         puntua(0)
 
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(TotalFuentesIncorrectas)
 
-def chequeaJavaScript(html,filaRating,filaDato,titulo):
+
+def chequeaJavaScript(html, filaRating, filaDato, titulo):
     global Puntuacion
-    global ListaInformacion
-    if "javascript"  in html:
+    global lista_informacion
+    if "javascript" in html:
         Puntuacion = Puntuacion - NotaParaRestar / 2
         puntua(2)
-        ListaDeReportes.append("Hemos encontrados referencias a javascript en el html. No deberian estar.")
+        lista_reportes.append("Hemos encontrados referencias a javascript en el html. No deberian estar.")
     else:
         puntua(0)
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(html.count("javascript"))
 
-def chequeaFlash(html,filaRating,filaDato,titulo):
 
+def chequeaFlash(html, filaRating, filaDato, titulo):
     global Puntuacion
-    global ListaInformacion
-    if "flash"  in html:
+    global lista_informacion
+    if "flash" in html:
         Puntuacion = Puntuacion - NotaParaRestar / 2
         puntua(2)
-        ListaDeReportes.append("Hemos encontrados referencias a flash en el html. No deberian estar.")
+        lista_reportes.append("Hemos encontrados referencias a flash en el html. No deberian estar.")
     else:
         puntua(0)
 
     cargaListas(filaRating, filaDato, titulo)
     cargaDatos(html.count("flash"))
 
+
 def escribeLog():
-
     file = open("resultadoHTML_Email_Check.txt", "w")
-    for reporte in ListaDeReportes:
+    for reporte in lista_reportes:
         file.write(reporte + os.linesep)
-
 
     file.close()
 
+
 def cargaXLSX():
-    #Escribir resultados ampliados en la columna I, u otra fuera de impresión.
+    # Escribir resultados ampliados en la columna I, u otra fuera de impresión.
 
     """wb = load_workbook('Plantilla Entregabilidad Newsletter.xlsx')
     ws = wb['Informe']
     #df = pd.read_excel('file.xlsx', sheet_name='sheet1')
-    for index in range(0,len(ListaPuntuaciones)):
+    for index in range(0,len(lista_puntuaciones)):
 
-        cell1 = 'E%d' % (listaRanking[index])
-        ws[cell1] = ListaPuntuaciones[index]
+        cell1 = 'E%d' % (lista_ranking[index])
+        ws[cell1] = lista_puntuaciones[index]
 
 
     wb.save("Informe Entregabilidad.xlsx")
@@ -416,115 +430,117 @@ def cargaXLSX():
     wb = editpyxl.Workbook()
     source_filename = r'Plantilla Entregabilidad Newsletter.xlsx'
 
-
     wb.open(source_filename)
     ws = wb.active
-    for index in range(0,len(ListaPuntuaciones)):
+    for index, puntuacion in enumerate(lista_puntuaciones):
+        cell1 = 'E%d' % (lista_ranking[index])
+        ws.cell(cell1).value = str(puntuacion)
+        cell2 = 'D%d' % (lista_posiciones[index])
+        ws.cell(cell2).value = str(lista_errores[index])
 
-        cell1 = 'E%d' % (listaRanking[index])
-        ws[cell1] = ListaPuntuaciones[index]
-        cell2 = 'D%d' % (listaPosiciones[index])
-        ws[cell2] = listaErrores[index]
-
-    ws['A15'] = int(Puntuacion)/100
-    ws['A15'].number_format = '0.00%'
-    ws['A9'] = nombreCliente
-    ws['A12'] = emailCLiente
-    ws['G9']= date.today()
+    ws.cell('A15').value = int(Puntuacion) / 100
+    ws.cell('A15').number_format = '0.00%'
+    ws.cell('A9').value = nombre_cliente
+    ws.cell('A12').value = email_cliente
+    ws.cell('G9').value = date.today()
     ws2 = wb.get_sheet_by_name("Errores")
     indiceHoja1 = 0
 
-    """for i in listaTitulos:
-        cellT = 'A%d' % (indiceHoja1)
+    for i in lista_titulos:
+        cellT = 'A%d' % (indiceHoja1 + 1)
         ws2[cellT] = i
-        indiceHoja1+=1
-        for j in listaErrores:
+        indiceHoja1 += 1
+
+        """for j in lista_errores:
             for y in j:
                 cellT = 'A%d' % (indiceHoja1)
                 indiceHoja1 += 1
                 ws2[cellT] = y
-
         cellT = 'A%d' % (indiceHoja1)
         indiceHoja1 += 1
         ws2[cellT] = """""
 
-
-    wb.save(nombreInforme)
+    wb.save(nombre_informe)
     wb.close()
 
+
 def cargaFuentes():
-    global listaFuentes
+    global lista_fuentes
     f = open('Fuentes texto.txt', 'r')
     mensaje = f.read()
-    ListaFuentes = []
+    lista_fuentes = []
     f.close()
-    ListaFuentes.append(mensaje)
-    parseo = ListaFuentes[0].split("\n")
+    lista_fuentes.append(mensaje)
+    parseo = lista_fuentes[0].split("\n")
     for i in parseo:
         if not i.isnumeric():
-            listaFuentes.append(i.lower())
+            lista_fuentes.append(i.lower())
+
 
 def parseoGlobal(html):
-    global ListaParseoGlobal
+    global lista_parseo_global
     ListaAux = []
-    ListaParseoGlobal = parseaStringPorInicioYFinal(html,"<",">")
-    for i in ListaParseoGlobal:
-        if len(i)<7:
+    lista_parseo_global = parseaStringPorInicioYFinal(html, "<", ">")
+    for i in lista_parseo_global:
+        if len(i) < 7:
             pass
         else:
             ListaAux.append(i.lower())
-    ListaParseoGlobal = ListaAux
+    lista_parseo_global = ListaAux
+
 
 def cargaDatos(dato):
-    global listaErrores
-    listaErrores.append(dato)
+    global lista_errores
+    lista_errores.append(dato)
 
-def cargaListas(filaRating,filaDato,titulo):
-    global listaRanking
-    global listaPosiciones
-    global listaTitulos
 
-    listaRanking.append(filaRating)
-    listaPosiciones.append(filaDato)
-    listaTitulos.append(titulo)
+def cargaListas(filaRating, filaDato, titulo):
+    global lista_ranking
+    global lista_posiciones
+    global lista_titulos
+
+    lista_ranking.append(filaRating)
+    lista_posiciones.append(filaDato)
+    lista_titulos.append(titulo)
+
 
 def mideTamañoFichero(fichero):
     sizefile = os.stat(fichero).st_size
-    print("El tamaño de ",fichero," es de ",sizefile)
+    print("El tamaño de ", fichero, " es de ", sizefile)
     return sizefile
+
 
 if __name__ == '__main__':
     html = leeTXT("cargaHTML.txt")
     cuerpo = leeTXT("cargaCuerpo.txt")
     asunto = leeTXT("cargaAsunto.txt")
 
-
     parseoGlobal(html)
 
     cargaFuentes()
-    chequeaForm(html,22,23,"A01 Uso de formularios")
-    chequeaMargenImagen(html,24,25,"A02 Margenes de las imágenes")
-    chequeaTbody(html,27,29,"A03-Etiqueta tbody")
-    chequeaColores(html,30,31,"A04 Uso de colores")
-    chequeaFuente(html,32,33,"A05 Uso de fuentes de texto alternativas")
-    cuentaImagenes(html,34,36,"A06 Cantidad de imágenes")
-    chequeaJavaScript(html,37,38,"A07 Uso de javascript")
-    chequeaFlash(html,39,40,"A08 Uso de flash")
-    cuentaMayusculasYMinusculas(cuerpo,"cuerpo",41,42,"B01 Mayúsculas en el cuerpo")
-    buscaExclamacionesIncorrectas(cuerpo,"cuerpo",43,44,"B02 Exclamaciones en el cuerpo")
-    chequeaUNSUBSCRIBE(cuerpo,45,46,"B03 Boton de desuscripción")
-    chequeaPalabrasGancho(cuerpo,47,48,"B04 Uso de palabras gancho")
-    chequeaTamañoCuerpo(cuerpo,49,50,"B05 Tamaño del cuerpo")
-    cuentaMayusculasYMinusculas(asunto, "asunto",51,52,"C01*Mayúsculas en el asunto")
-    buscaExclamacionesIncorrectas(asunto, "asunto",53,54,"C02 Exclamaciones en el asunto")
-    chequeaTamanoAsunto(asunto,55,56,"C03 Tamaño del asunto")
+    chequeaForm(html, 22, 23, "A01 Uso de formularios")
+    chequeaMargenImagen(html, 24, 25, "A02 Margenes de las imágenes")
+    chequeaTbody(html, 27, 29, "A03-Etiqueta tbody")
+    chequeaColores(html, 30, 31, "A04 Uso de colores")
+    chequeaFuente(html, 32, 33, "A05 Uso de fuentes de texto alternativas")
+    cuentaImagenes(html, 34, 36, "A06 Cantidad de imágenes")
+    chequeaJavaScript(html, 37, 38, "A07 Uso de javascript")
+    chequeaFlash(html, 39, 40, "A08 Uso de flash")
+    cuentaMayusculasYMinusculas(cuerpo, "cuerpo", 41, 42, "B01 Mayúsculas en el cuerpo")
+    buscaExclamacionesIncorrectas(cuerpo, "cuerpo", 43, 44, "B02 Exclamaciones en el cuerpo")
+    chequeaUNSUBSCRIBE(cuerpo, 45, 46, "B03 Boton de desuscripción")
+    chequeaPalabrasGancho(cuerpo, 47, 48, "B04 Uso de palabras gancho")
+    chequeaTamañoCuerpo(cuerpo, 49, 50, "B05 Tamaño del cuerpo")
+    cuentaMayusculasYMinusculas(asunto, "asunto", 51, 52, "C01*Mayúsculas en el asunto")
+    buscaExclamacionesIncorrectas(asunto, "asunto", 53, 54, "C02 Exclamaciones en el asunto")
+    chequeaTamanoAsunto(asunto, 55, 56, "C03 Tamaño del asunto")
 
-    print(ListaPuntuaciones)
+    print(lista_puntuaciones)
 
-    texto = "La puntuación del analisis es de " + str(Puntuacion) +" sobre 100"
-    ListaDeReportes.append(texto)
-    print(len(listaPosiciones),len(ListaInformacion),len(listaRanking),len(listaTitulos),len(ListaPuntuaciones),len(listaErrores))
+    texto = "La puntuación del analisis es de " + str(Puntuacion) + " sobre 100"
+    lista_reportes.append(texto)
+    print(len(lista_posiciones), len(lista_informacion), len(lista_ranking), len(lista_titulos),
+          len(lista_puntuaciones), len(lista_errores))
     cargaXLSX()
     escribeLog()
-    mideTamañoFichero(nombreInforme)
-
+    mideTamañoFichero(nombre_informe)
